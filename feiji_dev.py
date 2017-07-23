@@ -306,6 +306,8 @@ class Main(object):
             if self.enemy:
                 self.enemy.move()
                 self.enemy.display(m)
+            else:
+                self.enemy = Small_Enemy(m)
 
 
 
