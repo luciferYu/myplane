@@ -6,6 +6,32 @@ import sys
 from pygame.locals import *
 import math
 
+class Hero(object):
+    def __init__(self,weight,height):
+        '''初始化飞机'''
+        self.image = pygame.image.load('./resource/hero1.png')
+        self.x,self.y = weight / 2 - (100 / 2),height - 150
+        self.speed = 5
+
+    def move(self):
+        '''增加飞机移动方法'''
+        key_pressed = pygame.key.get_pressed()  # 注意这种方式是能够检测到连续按下的，比之前的版本要新
+
+        if key_pressed[K_w] or key_pressed[K_UP]:
+            self.y -= self.speed
+        if key_pressed[K_s] or key_pressed[K_DOWN]:
+            self.y += self.speed
+        if key_pressed[K_a] or key_pressed[K_LEFT]:
+            self.x -= self.speed
+        if key_pressed[K_d] or key_pressed[K_RIGHT]:
+            self.x += self.speed
+
+    def display(self,screen):
+        #  将飞机图片粘贴到窗口中
+        screen.blit(self.image,(self.x,self.y))
+
+
+
 def main():
     #整体流程控制
     #  创建一个窗口显示东西
@@ -16,24 +42,8 @@ def main():
 
     #  创建一个背景图片
     background = pygame.image.load('./resource/background.png')
-    #  创建一个玩家飞机图片
-    hero = pygame.image.load('./resource/hero1.png')
-
-    # 创建一个敌机
-    enemy = pygame.image.load('./resource/enemy-3.gif')
-
-
-
-
-    #screen.blit(enemy, (weight / 2 - (140 / 2), height - 580))
-
-    x =  weight / 2 - (100 / 2)
-    y =  height - 150
-    speed = 5
-
-    # z = 1
-    # w = 1
-
+    #   创建一个英雄飞机
+    hero = Hero(weight, height)
     while True:
         #  添加事件循环
         for event in pygame.event.get():
@@ -41,34 +51,13 @@ def main():
             if event.type == pygame.QUIT:
                 sys.exit()
 
-       # 监听键盘事件
-        key_pressed = pygame.key.get_pressed()  # 注意这种方式是能够检测到连续按下的，比之前的版本要新
-
-        if key_pressed[K_w] or key_pressed[K_UP]:
-            y -= speed
-        if key_pressed[K_s] or key_pressed[K_DOWN]:
-            y += speed
-        if key_pressed[K_a] or key_pressed[K_LEFT]:
-            x -= speed
-        if key_pressed[K_d] or key_pressed[K_RIGHT]:
-            x += speed
-        if key_pressed[K_SPACE]:
-            print('空格')
 
         #  3.将背景图片粘贴到窗口中
         screen.blit(background, (0, 0))
 
-        #让飞机画圆圈
+        hero.move()
 
-        # z += 1
-        # x += math.sin(z)* 60
-        # y = math.sin(z)* 60 + 400
-        # w += 5
-        # y -= w
-
-
-        #  将飞机图片粘贴到窗口中
-        screen.blit(hero, (x,y))
+        hero.display(screen)
 
         #  4.显示窗口中的内容
         pygame.display.update()
