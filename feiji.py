@@ -4,6 +4,7 @@ import pygame
 import time
 import sys
 from pygame.locals import *
+import math
 
 def main():
     #整体流程控制
@@ -50,17 +51,19 @@ def main():
 
         #  3.将背景图片粘贴到窗口中
         screen.blit(background, (0, 0))
-
-
+        z = weight / 2 - (100 / 2)
+        x += 1
+        y = math.sin(x)*50 + 200
         #  将飞机图片粘贴到窗口中
-        screen.blit(hero, (x,y))
+        screen.blit(hero, (z,y))
+        #screen.blit(hero, (x,y))
 
 
         #  4.显示窗口中的内容
         pygame.display.update()
 
         #  暂停0.05秒显示
-        time.sleep(0.01)
+        time.sleep(0.1)
 
 
 if __name__ == '__main__':
