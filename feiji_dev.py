@@ -7,6 +7,7 @@ import time
 import math
 from pygame.locals import *
 from collections import deque
+import random
 
 class Thing(object):
     '''
@@ -81,10 +82,16 @@ class Hero(Plane):
         self.weapon_list = deque(maxlen=3)
         self.weapon_list.extend([Normal_Bullet,Double_Bullet,Triple_Bullet])
         self.bullet_type = Normal_Bullet
+        self.missile = None
 
     def display(self,main):
+        #将导弹显示在飞机以下图层
+        if self.missile:
+            self.missile.auto_move(self)
+            self.missile.display()
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
+
 
     def move(self):
         '''增加飞机移动方法'''
@@ -132,6 +139,32 @@ class Hero(Plane):
             print(self.weapon_list)
             self.bullet_type = self.weapon_list[0]
 
+    def shot_missile(self):
+        '''飞机发射方法'''
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_k] and not self.missile:
+            self.missile = Missile(m,self)
+            self.missile.display()
+
+
+
+
+class Small_Enemy(Plane):
+    '''定义一个敌人的小飞机类'''
+    def __init__(self,main):
+        super().__init__(51, 39, './resource/enemy0.png', speed=5)  # 初始化敌人小飞机类
+        self.position_x = random.randint(0,m.get_weight() - self.size_x)
+        self.position_y = 0
+
+    def move(self):
+        self.position_y += self.get_speed()  # 小飞机向下移动
+
+    def display(self,main):
+        #  将飞机图片粘贴到窗口中
+        if not self.is_bottom():
+            main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
+        else:
+            del self
 
 class Bullet(Thing):
     '''定义了一个子弹基类'''
@@ -195,6 +228,24 @@ class Triple_Bullet(Bullet):
         main.screen.blit(self.get_image(),(self.position_x3,self.position_y)) #显示子弹的位置
 
 
+class Missile(Thing):
+    def __init__(self,main,hero):
+        super().__init__(63,53,'./resource/bomb1.png')
+        self.position_x = hero.position_x + hero.size_x/2 + 3 # 物体的位置 横坐标
+        self.position_y = hero.position_y + 30  # 物体的位置 纵坐标
+        self.main = main
+        self.is_shot = False
+
+    def auto_move(self,hero):
+        if not self.is_shot:
+            self.position_x = hero.position_x + hero.size_x / 2 + 3  # 物体的位置 横坐标
+            self.position_y = hero.position_y + 30  # 物体的位置 纵坐标
+
+    def display(self):
+        '''显示导弹位置'''
+        self.main.screen.blit(self.get_image(), (self.position_x, self.position_y))  # 显示子弹的位置
+
+
 class Main(object):
     '''游戏主界面类'''
     def __init__(self,weight=400,height=600):
@@ -212,6 +263,8 @@ class Main(object):
     def main(self):
         '''游戏的主界面函数'''
         hero = Hero(m)  # 创建自己的英雄飞机
+        se = Small_Enemy(m)  # 创建敌人的小飞机
+        #ms = Missile(m,hero) ##测试功能
         while True:  # 进入游戏主循环
             #  添加退出事件循环
             for event in pygame.event.get():
@@ -221,10 +274,18 @@ class Main(object):
 
             self.screen.blit(self.background, (0, 0))  # 添加背景信息
 
+            #ms.display()  ## 测试功能
+
             hero.move()  # 英雄飞机的移动
             hero.shot()  # 英雄飞机的射击
             hero.change_weapon()  # 英雄飞机更换武器
+            hero.shot_missile()
             hero.display(m)  # 英雄飞机显示
+
+            se.move()
+            se.display(m)
+
+
 
             pygame.display.update()  # 4.显示窗口中的内容
 
