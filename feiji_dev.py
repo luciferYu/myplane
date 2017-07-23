@@ -11,16 +11,18 @@ class Thing(object):
     定义一个物体的基类
     '''
     def __init__(self,size_x,size_y,image,speed=10):
-        self.__size_x = size_x  # 物体的长
-        self.__size_y = size_y  # 物体的宽
+        self.size_x = size_x  # 物体的长
+        self.size_y = size_y  # 物体的宽
         self.__image = pygame.image.load(image)  #加载物体的图片
         self.__speed = speed
+        self.position_x = 0
+        self.position_y = 0
 
     def get_size_x(self):
-        return self.__size_x
+        return self.size_x
 
     def get_size_y(self):
-        return self.__size_y
+        return self.size_y
 
     def get_image(self):
         return self.__image
@@ -34,45 +36,78 @@ class Thing(object):
 
     def is_top(self):
         #判断物体是否上越界
-        pass
+        if self.position_y <= 0:
+            return True
+        else:
+            return False
 
     def is_bottom(self):
         #判断物体是否下越界
-        pass
+        if (self.position_y + self.size_y) >= m.get_height():
+            return True
+        else:
+            return False
 
     def is_left(self):
         #判断物体是否左越界
-        pass
+        if self.position_x <= 0:
+            return True
+        else:
+            return False
 
     def is_right(self):
         #判断物体是否右越界
-        pass
+        if (self.position_x + self.size_x) >= m.get_weight():
+            return True
+        else:
+            return False
 
 class Plane(Thing):
+    pass
+
+class Bullet(Thing):
     pass
 
 class Hero(Plane):
     def __init__(self,main):
         super().__init__(100,124,'./resource/hero1.png')
-        self.__position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
-        self.__position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
+        self.position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
+        self.position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(int(self.__position_x),int(self.__position_y))) #显示飞机的位置
+        main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
 
     def move(self):
         '''增加飞机移动方法'''
         key_pressed = pygame.key.get_pressed()  # 注意这种方式是能够检测到连续按下的，比之前的版本要新
 
         if key_pressed[K_w] or key_pressed[K_UP]:
-            self.__position_y -= self.get_speed()
+            if not self.is_top():
+                self.position_y -= self.get_speed()
+            else:
+                self.position_y = 0
         if key_pressed[K_s] or key_pressed[K_DOWN]:
-            self.__position_y += self.get_speed()
+            if not self.is_bottom():
+                self.position_y += self.get_speed()
+            else:
+                self.position_y = m.get_height() - self.size_y
         if key_pressed[K_a] or key_pressed[K_LEFT]:
-            self.__position_x -= self.get_speed()
+            if not self.is_left():
+                self.position_x -= self.get_speed()
+            else:
+                self.position_x = 0
         if key_pressed[K_d] or key_pressed[K_RIGHT]:
-            self.__position_x += self.get_speed()
+            if not self.is_right():
+                self.position_x += self.get_speed()
+            else:
+                self.position_x = m.get_weight() - self.size_x
+
+class Normal_Bullet(Bullet):
+    pass
+
+
+
 
 
 
