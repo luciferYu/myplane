@@ -8,7 +8,6 @@ import math
 from pygame.locals import *
 from collections import deque
 
-
 class Thing(object):
     '''
     定义一个物体的基类
@@ -65,24 +64,16 @@ class Thing(object):
         else:
             return False
 
+
 class Plane(Thing):
+    '''定义一个飞机基类'''
     pass
 
-class Bullet(Thing):
-    def __init__(self,main,hero):
-        super().__init__(22,22,'./resource/bullet.png')
-        self.position_x = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
-        self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
-
-    def auto_move(self):
-        self.position_y -= self.speed
-
-    def display(self,main):
-        #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
 
 class Hero(Plane):
+    '''定义英雄飞机类'''
     def __init__(self,main):
+        '''初始化英雄飞机方法'''
         super().__init__(100,124,'./resource/hero1.png')
         self.position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
         self.position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
@@ -121,6 +112,7 @@ class Hero(Plane):
                 self.position_x = m.get_weight() - self.size_x
 
     def shot(self):
+        '''飞机射击方法'''
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_SPACE]:
             print('--space--')
@@ -133,18 +125,37 @@ class Hero(Plane):
                 del bullet
 
     def change_weapon(self):
+        '''飞机更换武器方法'''
         key_pressed = pygame.key.get_pressed()
-        if key_pressed[K_c]:
+        if key_pressed[K_j]:
             self.weapon_list.rotate(1)
             print(self.weapon_list)
             self.bullet_type = self.weapon_list[0]
 
 
+class Bullet(Thing):
+    '''定义了一个子弹基类'''
+    def __init__(self,main,hero):
+        super().__init__(22,22,'./resource/bullet.png')
+        self.position_x = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
+        self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
+
+    def auto_move(self):
+        '''子弹的移动方法'''
+        self.position_y -= self.speed
+
+    def display(self,main):
+        #  将飞机图片粘贴到窗口中
+        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
+
 
 class Normal_Bullet(Bullet):
+    '''定义了一个普通子弹类'''
     pass
 
+
 class Double_Bullet(Bullet):
+    '''定义了一个双重子弹类'''
     def __init__(self,main,hero):
         super().__init__(main,hero)
         self.position_x1 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 35 # 物体的位置 横坐标
@@ -160,7 +171,9 @@ class Double_Bullet(Bullet):
         main.screen.blit(self.get_image(),(self.position_x1,self.position_y)) #显示子弹的位置
         main.screen.blit(self.get_image(),(self.position_x2,self.position_y)) #显示子弹的位置
 
+
 class Triple_Bullet(Bullet):
+    '''定义了一个三重子弹类'''
     def __init__(self,main,hero):
         super().__init__(main,hero)
         self.position_x1 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
@@ -170,6 +183,7 @@ class Triple_Bullet(Bullet):
 
 
     def auto_move(self):
+        '''子弹移动'''
         self.position_x1 -= self.speed
         self.position_x3 += self.speed
         self.position_y -= self.speed
@@ -181,52 +195,42 @@ class Triple_Bullet(Bullet):
         main.screen.blit(self.get_image(),(self.position_x3,self.position_y)) #显示子弹的位置
 
 
-
-
-
-
 class Main(object):
+    '''游戏主界面类'''
     def __init__(self,weight=400,height=600):
         self.__weight = weight #  屏幕的宽度
         self.__height = height  # 屏幕的高度
         self.background = pygame.image.load('./resource/background.png') #  背景图片
         self.screen = pygame.display.set_mode((self.__weight, self.__height), 0, 32)
 
-    def get_weight(self):
+    def get_weight(self):  # 获得主窗口的宽度
         return self.__weight
 
-    def get_height(self):
+    def get_height(self):  # 获得主窗口的高度
         return self.__height
 
-
     def main(self):
-        hero = Hero(m)
-        while True:
-            #  添加事件循环
+        '''游戏的主界面函数'''
+        hero = Hero(m)  # 创建自己的英雄飞机
+        while True:  # 进入游戏主循环
+            #  添加退出事件循环
             for event in pygame.event.get():
                 # 判断退出条件
                 if event.type == pygame.QUIT:
                     sys.exit()
 
-            self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.background, (0, 0))  # 添加背景信息
 
-            hero.move()
-            hero.shot()
-            hero.change_weapon()
+            hero.move()  # 英雄飞机的移动
+            hero.shot()  # 英雄飞机的射击
+            hero.change_weapon()  # 英雄飞机更换武器
+            hero.display(m)  # 英雄飞机显示
 
+            pygame.display.update()  # 4.显示窗口中的内容
 
-            hero.display(m)
-
-
-
-            #  4.显示窗口中的内容
-            pygame.display.update()
-
-            #  暂停0.05秒显示
-            time.sleep(0.05)
+            time.sleep(0.05)  # 暂停0.05秒显示
 
 
-
-if __name__ == '__main__':
-    m = Main()
-    m.main()
+if __name__ == '__main__':  # 游戏主函数
+    m = Main()  # 实例化主函数类
+    m.main()  # 启动主函数
