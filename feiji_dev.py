@@ -4,7 +4,10 @@
 import pygame
 import sys
 import time
+import math
 from pygame.locals import *
+from collections import deque
+
 
 class Thing(object):
     '''
@@ -84,8 +87,9 @@ class Hero(Plane):
         self.position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
         self.position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
         self.bullets = []
-        #self.bullet_type = Normal_Bullet
-        self.bullet_type = Triple_Bullet
+        self.weapon_list = deque(maxlen=3)
+        self.weapon_list.extend([Normal_Bullet,Double_Bullet,Triple_Bullet])
+        self.bullet_type = Normal_Bullet
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
@@ -116,7 +120,6 @@ class Hero(Plane):
             else:
                 self.position_x = m.get_weight() - self.size_x
 
-
     def shot(self):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_SPACE]:
@@ -129,9 +132,33 @@ class Hero(Plane):
             else:
                 del bullet
 
+    def change_weapon(self):
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_c]:
+            self.weapon_list.rotate(1)
+            print(self.weapon_list)
+            self.bullet_type = self.weapon_list[0]
+
+
+
 class Normal_Bullet(Bullet):
     pass
 
+class Double_Bullet(Bullet):
+    def __init__(self,main,hero):
+        super().__init__(main,hero)
+        self.position_x1 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 35 # 物体的位置 横坐标
+        self.position_x2 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x() / 2) - 35  # 物体的位置 横坐标
+        self.position_y = hero.position_y + 22  # 物体的位置 纵坐标
+
+
+    def auto_move(self):
+        self.position_y -= self.speed
+
+    def display(self,main):
+        #  将飞机图片粘贴到窗口中
+        main.screen.blit(self.get_image(),(self.position_x1,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.get_image(),(self.position_x2,self.position_y)) #显示子弹的位置
 
 class Triple_Bullet(Bullet):
     def __init__(self,main,hero):
@@ -140,6 +167,7 @@ class Triple_Bullet(Bullet):
         self.position_x2 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x() / 2) + 1  # 物体的位置 横坐标
         self.position_x3 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x() / 2) + 1  # 物体的位置 横坐标
         self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
+
 
     def auto_move(self):
         self.position_x1 -= self.speed
@@ -184,6 +212,7 @@ class Main(object):
 
             hero.move()
             hero.shot()
+            hero.change_weapon()
 
 
             hero.display(m)
