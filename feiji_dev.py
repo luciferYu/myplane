@@ -14,7 +14,7 @@ class Thing(object):
         self.size_x = size_x  # 物体的长
         self.size_y = size_y  # 物体的宽
         self.__image = pygame.image.load(image)  #加载物体的图片
-        self.__speed = speed
+        self.speed = speed
         self.position_x = 0
         self.position_y = 0
 
@@ -28,7 +28,7 @@ class Thing(object):
         return self.__image
 
     def get_speed(self):
-        return self.__speed
+        return self.speed
 
     def move(self):
         #物体的移动方法
@@ -73,6 +73,7 @@ class Hero(Plane):
         super().__init__(100,124,'./resource/hero1.png')
         self.position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
         self.position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
+        self.bullets = []
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
@@ -103,8 +104,36 @@ class Hero(Plane):
             else:
                 self.position_x = m.get_weight() - self.size_x
 
+
+    def shot(self):
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_SPACE]:
+            print('--space--')
+            self.bullets.append(Normal_Bullet(m,self))
+        for bullet in self.bullets:
+            bullet.auto_move()
+            if not bullet.is_top():
+                bullet.display(m)
+            else:
+                del bullet
+
+
+
+
+
 class Normal_Bullet(Bullet):
-    pass
+    def __init__(self,main,hero):
+        super().__init__(22,22,'./resource/bullet.png')
+        self.position_x = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
+        self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
+
+    def auto_move(self):
+        self.position_y -= self.speed
+
+    def display(self,main):
+        #  将飞机图片粘贴到窗口中
+        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
+
 
 
 
@@ -137,6 +166,7 @@ class Main(object):
             self.screen.blit(self.background, (0, 0))
 
             hero.move()
+            hero.shot()
 
 
             hero.display(m)
