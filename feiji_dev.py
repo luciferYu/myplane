@@ -92,10 +92,14 @@ class Hero(Plane):
             self.missile.display()
         elif self.missile and self.missile.is_shot:
             self.missile.auto_shot_enemy_move(self.main.enemy)
-            self.missile.display()
+            if self.missile.position_x != self.main.enemy.position_x and self.missile.position_y != self.main.enemy.position_y:
+                self.missile.display()
+            else:
+                self.main.enemy = None
+                self.missile = None
+
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
-
 
     def move(self):
         '''增加飞机移动方法'''
@@ -153,20 +157,16 @@ class Hero(Plane):
             self.missile.is_shot = True
 
 
-
-
-
-
 class Small_Enemy(Plane):
     '''定义一个敌人的小飞机类'''
     def __init__(self,main):
-        super().__init__(51, 39, './resource/enemy0.png', speed=5)  # 初始化敌人小飞机类
+        super().__init__(51, 39, './resource/enemy0.png', speed=3)  # 初始化敌人小飞机类
         self.position_x = random.randint(0,m.get_weight() - self.size_x)
         self.position_y = 0
 
     def move(self):
         self.position_y += self.get_speed()  # 小飞机向下移动
-
+        self.position_x += random.randint(-1,1) * self.get_speed()*3
     def display(self,main):
         #  将飞机图片粘贴到窗口中
         if not self.is_bottom():
@@ -303,8 +303,9 @@ class Main(object):
             hero.shot_missile()
             hero.display(m)  # 英雄飞机显示
 
-            self.enemy.move()
-            self.enemy.display(m)
+            if self.enemy:
+                self.enemy.move()
+                self.enemy.display(m)
 
 
 
