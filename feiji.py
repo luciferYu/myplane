@@ -10,7 +10,7 @@ class Hero(object):
     def __init__(self,weight,height):
         '''初始化飞机'''
         self.image = pygame.image.load('./resource/hero1.png')
-        self.x,self.y = weight / 2 - (100 / 2),height - 150
+        self.position = self.x,self.y = weight / 2 - (100 / 2),height - 150
         self.speed = 5
 
     def move(self):
