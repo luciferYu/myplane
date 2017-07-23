@@ -29,7 +29,10 @@ def main():
 
     x =  weight / 2 - (100 / 2)
     y =  height - 150
-    z = 1
+    speed = 5
+
+    # z = 1
+    # w = 1
 
     while True:
         #  添加事件循环
@@ -37,34 +40,41 @@ def main():
             #判断退出条件
             if event.type == pygame.QUIT:
                 sys.exit()
-            #判断键盘是否是按下了键
-            elif event.type == KEYDOWN:
-                #检测按键是否是a或者left
-                if event.key == K_a or event.key == K_LEFT:
-                    x -= 5
-                elif event.key == K_s or event.key == K_DOWN:
-                    y += 5
-                elif event.key == K_d or event.key == K_RIGHT:
-                    x += 5
-                elif event.key == K_w or event.key == K_UP:
-                    y -= 5
 
+       # 监听键盘事件
+        key_pressed = pygame.key.get_pressed()  # 注意这种方式是能够检测到连续按下的，比之前的版本要新
+
+        if key_pressed[K_w] or key_pressed[K_UP]:
+            y -= speed
+        if key_pressed[K_s] or key_pressed[K_DOWN]:
+            y += speed
+        if key_pressed[K_a] or key_pressed[K_LEFT]:
+            x -= speed
+        if key_pressed[K_d] or key_pressed[K_RIGHT]:
+            x += speed
+        if key_pressed[K_SPACE]:
+            print('空格')
 
         #  3.将背景图片粘贴到窗口中
         screen.blit(background, (0, 0))
-        z += 1
-        x += math.sin(z)* 60
-        y = math.sin(z)* 60 + 200
+
+        #让飞机画圆圈
+
+        # z += 1
+        # x += math.sin(z)* 60
+        # y = math.sin(z)* 60 + 400
+        # w += 5
+        # y -= w
+
+
         #  将飞机图片粘贴到窗口中
         screen.blit(hero, (x,y))
-        #screen.blit(hero, (x,y))
-
 
         #  4.显示窗口中的内容
         pygame.display.update()
 
         #  暂停0.05秒显示
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 
 if __name__ == '__main__':
