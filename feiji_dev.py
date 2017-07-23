@@ -83,11 +83,15 @@ class Hero(Plane):
         self.weapon_list.extend([Normal_Bullet,Double_Bullet,Triple_Bullet])
         self.bullet_type = Normal_Bullet
         self.missile = None
+        self.main = main
 
     def display(self,main):
         #将导弹显示在飞机以下图层
-        if self.missile:
+        if self.missile and not self.missile.is_shot:
             self.missile.auto_move(self)
+            self.missile.display()
+        elif self.missile and self.missile.is_shot:
+            self.missile.auto_shot_enemy_move(self.main.enemy)
             self.missile.display()
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
@@ -145,6 +149,10 @@ class Hero(Plane):
         if key_pressed[K_k] and not self.missile:
             self.missile = Missile(m,self)
             self.missile.display()
+        if key_pressed[K_l] and self.missile:
+            self.missile.is_shot = True
+
+
 
 
 
@@ -241,6 +249,17 @@ class Missile(Thing):
             self.position_x = hero.position_x + hero.size_x / 2 + 3  # 物体的位置 横坐标
             self.position_y = hero.position_y + 30  # 物体的位置 纵坐标
 
+    def auto_shot_enemy_move(self,enemy):
+        if self.is_shot:
+            if self.position_x > enemy.position_x:
+                self.position_x -= self.speed
+            else:
+                self.position_x += self.speed
+            if self.position_y > enemy.position_y:
+                self.position_y -= self.speed
+            else:
+                self.position_y += self.speed
+
     def display(self):
         '''显示导弹位置'''
         self.main.screen.blit(self.get_image(), (self.position_x, self.position_y))  # 显示子弹的位置
@@ -253,6 +272,7 @@ class Main(object):
         self.__height = height  # 屏幕的高度
         self.background = pygame.image.load('./resource/background.png') #  背景图片
         self.screen = pygame.display.set_mode((self.__weight, self.__height), 0, 32)
+        self.enemy = None
 
     def get_weight(self):  # 获得主窗口的宽度
         return self.__weight
@@ -263,7 +283,8 @@ class Main(object):
     def main(self):
         '''游戏的主界面函数'''
         hero = Hero(m)  # 创建自己的英雄飞机
-        se = Small_Enemy(m)  # 创建敌人的小飞机
+        self.enemy = Small_Enemy(m)  # 创建敌人的小飞机
+
         #ms = Missile(m,hero) ##测试功能
         while True:  # 进入游戏主循环
             #  添加退出事件循环
@@ -282,8 +303,8 @@ class Main(object):
             hero.shot_missile()
             hero.display(m)  # 英雄飞机显示
 
-            se.move()
-            se.display(m)
+            self.enemy.move()
+            self.enemy.display(m)
 
 
 
