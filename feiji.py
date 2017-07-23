@@ -29,6 +29,7 @@ def main():
 
     x =  weight / 2 - (100 / 2)
     y =  height - 150
+    z = 1
 
     while True:
         #  添加事件循环
@@ -51,11 +52,11 @@ def main():
 
         #  3.将背景图片粘贴到窗口中
         screen.blit(background, (0, 0))
-        z = weight / 2 - (100 / 2)
-        x += 1
-        y = math.sin(x)*50 + 200
+        z += 1
+        x += math.sin(z)* 60
+        y = math.sin(z)* 60 + 200
         #  将飞机图片粘贴到窗口中
-        screen.blit(hero, (z,y))
+        screen.blit(hero, (x,y))
         #screen.blit(hero, (x,y))
 
 
