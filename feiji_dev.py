@@ -66,7 +66,17 @@ class Plane(Thing):
     pass
 
 class Bullet(Thing):
-    pass
+    def __init__(self,main,hero):
+        super().__init__(22,22,'./resource/bullet.png')
+        self.position_x = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
+        self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
+
+    def auto_move(self):
+        self.position_y -= self.speed
+
+    def display(self,main):
+        #  将飞机图片粘贴到窗口中
+        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
 
 class Hero(Plane):
     def __init__(self,main):
@@ -74,6 +84,8 @@ class Hero(Plane):
         self.position_x = (main.get_weight() / 2) - (self.get_size_x() / 2) # 物体的位置 横坐标
         self.position_y = main.get_height() - self.get_size_y() - 50  # 物体的位置 纵坐标
         self.bullets = []
+        #self.bullet_type = Normal_Bullet
+        self.bullet_type = Triple_Bullet
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
@@ -109,31 +121,36 @@ class Hero(Plane):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_SPACE]:
             print('--space--')
-            self.bullets.append(Normal_Bullet(m,self))
+            self.bullets.append(self.bullet_type(m,self))
         for bullet in self.bullets:
             bullet.auto_move()
-            if not bullet.is_top():
+            if not bullet.is_top() or not bullet.is_bottom or not bullet.is_right:
                 bullet.display(m)
             else:
                 del bullet
 
-
-
-
-
 class Normal_Bullet(Bullet):
+    pass
+
+
+class Triple_Bullet(Bullet):
     def __init__(self,main,hero):
-        super().__init__(22,22,'./resource/bullet.png')
-        self.position_x = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
+        super().__init__(main,hero)
+        self.position_x1 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x()/2) + 1 # 物体的位置 横坐标
+        self.position_x2 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x() / 2) + 1  # 物体的位置 横坐标
+        self.position_x3 = hero.position_x + (hero.get_size_x() / 2) - (self.get_size_x() / 2) + 1  # 物体的位置 横坐标
         self.position_y = hero.position_y - 20  # 物体的位置 纵坐标
 
     def auto_move(self):
+        self.position_x1 -= self.speed
+        self.position_x3 += self.speed
         self.position_y -= self.speed
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
-
+        main.screen.blit(self.get_image(),(self.position_x1,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.get_image(),(self.position_x2,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.get_image(),(self.position_x3,self.position_y)) #显示子弹的位置
 
 
 
