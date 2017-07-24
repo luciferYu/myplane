@@ -92,11 +92,16 @@ class Hero(Plane):
             self.missile.display()
         elif self.missile and self.missile.is_shot:
             self.missile.auto_shot_enemy_move(self.main.enemy)
-            if self.missile.position_x != self.main.enemy.position_x and self.missile.position_y != self.main.enemy.position_y:
-                self.missile.display()
-            else:
+            if (self.main.enemy.position_y  <= self.missile.position_y <= (self.main.enemy.position_y + self.main.enemy.get_size_y())) and (self.main.enemy.position_x <= self.missile.position_x <= (self.main.enemy.position_x+self.main.enemy.get_size_x())):
+                # print(self.main.enemy,self.missile)  #  调试
+                print(self.missile.position_x, self.main.enemy.position_x)
+                print(self.missile.position_y, self.main.enemy.position_y)
                 self.main.enemy = None
                 self.missile = None
+                # print(self.main.enemy,self.missile)  # 调试
+            else:
+                self.missile.display()
+
 
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
@@ -137,10 +142,10 @@ class Hero(Plane):
             if not bullet.is_top() or not bullet.is_bottom or not bullet.is_right:
                 bullet.display(m)
             else:
-                print(self.bullets)
+                #print(self.bullets)  # 调试子弹
                 #在列表中删除子弹
                 self.bullets.remove(bullet)
-                print(self.bullets)
+                #print(self.bullets)  调试子弹
 
     def change_weapon(self):
         '''飞机更换武器方法'''
@@ -172,12 +177,8 @@ class Small_Enemy(Plane):
         self.position_x += random.randint(-1,1) * self.get_speed()*3
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        if not self.is_bottom():
-            main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
-        else:
-            print(self)
-            del self
-            #print(self)
+        main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
+
 
 class Bullet(Thing):
     '''定义了一个子弹基类'''
@@ -230,8 +231,8 @@ class Triple_Bullet(Bullet):
 
     def auto_move(self):
         '''子弹移动'''
-        self.position_x1 -= self.speed
-        self.position_x3 += self.speed
+        self.position_x1 -= (self.speed - 8)
+        self.position_x3 += (self.speed - 8)
         self.position_y -= self.speed
 
     def display(self,main):
@@ -248,6 +249,8 @@ class Missile(Thing):
         self.position_y = hero.position_y + 30  # 物体的位置 纵坐标
         self.main = main
         self.is_shot = False
+        self.speed = 20
+
 
     def auto_move(self,hero):
         if not self.is_shot:
