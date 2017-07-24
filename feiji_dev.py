@@ -292,9 +292,9 @@ class Missile(Thing):
             if math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 500:
                 self.speed = 100
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 150:
-                self.speed = 20
+                self.speed = 50
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 100:
-                self.speed = 10
+                self.speed = 30
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 20:
                 self.speed = 5
             else:
@@ -328,7 +328,8 @@ class Main(object):
         self.background = pygame.image.load('./resource/background.png') #  背景图片
         self.screen = pygame.display.set_mode((self.__weight, self.__height), 0, 32)
         self.enemy = None
-        self.screen_y = 0
+        self.screen_y1 = 0
+        self.screen_y2 = -600
         self.screen_speed = 5
 
     def get_weight(self):  # 获得主窗口的宽度
@@ -338,12 +339,15 @@ class Main(object):
         return self.__height
 
     def rorate_screen(self):
-        print(self.screen_y)
-        self.screen_y += self.screen_speed
-        self.screen.blit(self.background, (0, self.screen_y))
-        self.screen.blit(self.background,(0,self.screen_y - 600))
-        if self.screen_y >= 600:
-            self.screen_y = 0
+        #print(self.screen_y)
+        self.screen_y1 += self.screen_speed
+        self.screen_y2 += self.screen_speed
+        self.screen.blit(self.background, (0, self.screen_y1))
+        self.screen.blit(self.background,(0,self.screen_y2))
+        if self.screen_y1 >= 600:
+            self.screen_y1 = -600
+        if self.screen_y2 >= 600:
+            self.screen_y2 = -600
 
     def main(self):
         '''游戏的主界面函数'''
@@ -377,9 +381,10 @@ class Main(object):
 
 
 
-            pygame.display.update()  # 4.显示窗口中的内容
+            #pygame.display.update()  # 4.显示窗口中的内容
+            pygame.display.flip()  # 4.显示窗口中的内容
 
-            time.sleep(0.05)  # 暂停0.05秒显示
+            pygame.time.delay(50)  # 暂停0.05秒显示
 
 
 if __name__ == '__main__':  # 游戏主函数
