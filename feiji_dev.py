@@ -137,7 +137,10 @@ class Hero(Plane):
             if not bullet.is_top() or not bullet.is_bottom or not bullet.is_right:
                 bullet.display(m)
             else:
-                del bullet
+                print(self.bullets)
+                #在列表中删除子弹
+                self.bullets.remove(bullet)
+                print(self.bullets)
 
     def change_weapon(self):
         '''飞机更换武器方法'''
@@ -172,7 +175,9 @@ class Small_Enemy(Plane):
         if not self.is_bottom():
             main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
         else:
+            print(self)
             del self
+            #print(self)
 
 class Bullet(Thing):
     '''定义了一个子弹基类'''
