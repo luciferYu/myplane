@@ -179,7 +179,7 @@ class Small_Enemy(Plane):
         elif self.is_right():
             self.position_x -= self.get_speed()
         else:
-            self.position_x += random.randint(-1,1) * self.get_speed()*5
+            self.position_x += random.randint(-1,1) * self.get_speed()*3
     def display(self,main):
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
@@ -264,6 +264,16 @@ class Missile(Thing):
 
     def auto_shot_enemy_move(self,enemy):
         if self.is_shot:
+            #增加导弹变速更能
+            if math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 100:
+                self.speed = 20
+            elif math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 70:
+                self.speed = 7
+            elif math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 40:
+                self.speed = 3
+            else:
+                self.speed = 1
+            #导弹跟踪功能
             if self.position_x > enemy.position_x:
                 self.position_x -= self.speed
             else:
