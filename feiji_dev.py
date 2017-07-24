@@ -265,12 +265,12 @@ class Missile(Thing):
     def auto_shot_enemy_move(self,enemy):
         if self.is_shot:
             #增加导弹变速更能
-            if math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 100:
+            if math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 150:
                 self.speed = 20
-            elif math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 70:
-                self.speed = 7
-            elif math.sqrt((self.position_x ** 2) + (self.position_y ** 2)) > 40:
-                self.speed = 3
+            elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 100:
+                self.speed = 10
+            elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 20:
+                self.speed = 5
             else:
                 self.speed = 1
             #导弹跟踪功能
