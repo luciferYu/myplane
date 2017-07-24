@@ -16,7 +16,7 @@ class Thing(object):
     def __init__(self,size_x,size_y,image,speed=10):
         self.size_x = size_x  # 物体的长
         self.size_y = size_y  # 物体的宽
-        self.__image = pygame.image.load(image)  #加载物体的图片
+        self.image = pygame.image.load(image)  #加载物体的图片
         self.speed = speed
         self.position_x = 0
         self.position_y = 0
@@ -28,7 +28,7 @@ class Thing(object):
         return self.size_y
 
     def get_image(self):
-        return self.__image
+        return self.image
 
     def get_speed(self):
         return self.speed
@@ -94,8 +94,8 @@ class Hero(Plane):
             self.missile.auto_shot_enemy_move(self.main.enemy)
             if (self.main.enemy.position_y  <= self.missile.position_y <= (self.main.enemy.position_y + self.main.enemy.get_size_y())) and (self.main.enemy.position_x <= self.missile.position_x <= (self.main.enemy.position_x+self.main.enemy.get_size_x())):
                 # print(self.main.enemy,self.missile)  #  调试
-                print(self.missile.position_x, self.main.enemy.position_x)
-                print(self.missile.position_y, self.main.enemy.position_y)
+                #print(self.missile.position_x, self.main.enemy.position_x)
+                #print(self.missile.position_y, self.main.enemy.position_y)
                 self.main.enemy = None
                 self.missile = None
                 # print(self.main.enemy,self.missile)  # 调试
@@ -104,7 +104,7 @@ class Hero(Plane):
 
 
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(int(self.position_x),int(self.position_y))) #显示飞机的位置
+        main.screen.blit(self.image,(int(self.position_x),int(self.position_y))) #显示飞机的位置
 
     def move(self):
         '''增加飞机移动方法'''
@@ -184,11 +184,12 @@ class Small_Enemy(Plane):
             self.position_x += random.randint(-1,1) * self.get_speed()*3
 
     def bullet_move(self,bullet_temp):
+        print(self.position_x,self.position_y)
         bullet_temp.position_y += (self.speed + 5)
 
     def auto_file(self):
         rand_num = random.randint(1,50)
-        if rand_num in (3,7,13,27):
+        if rand_num in (10,20,30,40):
             self.bullet = Bullet(m,self.main.enemy)
             self.bullet.speed = (- self.bullet.speed)
             self.bullet.position_x = self.position_x + 23
@@ -200,12 +201,12 @@ class Small_Enemy(Plane):
         for bullet in self.bullets:
             if  not bullet.is_bottom():
                 self.bullet_move(bullet)
-                main.screen.blit(bullet.get_image(),(int(bullet.position_x),int(bullet.position_y)))
+                main.screen.blit(bullet.image,(int(bullet.position_x),int(bullet.position_y)))
             else:
                 print(self.bullets)
                 self.bullets.remove(bullet)
 
-        main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y))) # 显示飞机的位置
+        main.screen.blit(self.image, (int(self.position_x), int(self.position_y))) # 显示飞机的位置
 
 
 class Bullet(Thing):
@@ -221,7 +222,7 @@ class Bullet(Thing):
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(self.position_x,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x,self.position_y)) #显示子弹的位置
 
 
 class Normal_Bullet(Bullet):
@@ -243,8 +244,8 @@ class Double_Bullet(Bullet):
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(self.position_x1,self.position_y)) #显示子弹的位置
-        main.screen.blit(self.get_image(),(self.position_x2,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x1,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x2,self.position_y)) #显示子弹的位置
 
 
 class Triple_Bullet(Bullet):
@@ -265,9 +266,9 @@ class Triple_Bullet(Bullet):
 
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(),(self.position_x1,self.position_y)) #显示子弹的位置
-        main.screen.blit(self.get_image(),(self.position_x2,self.position_y)) #显示子弹的位置
-        main.screen.blit(self.get_image(),(self.position_x3,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x1,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x2,self.position_y)) #显示子弹的位置
+        main.screen.blit(self.image,(self.position_x3,self.position_y)) #显示子弹的位置
 
 
 class Missile(Thing):
@@ -278,7 +279,7 @@ class Missile(Thing):
         self.main = main
         self.is_shot = False
         self.speed = 20
-
+        self.y_flag = False  #用来识别自己的飞机是否超过了对方飞机 调整导弹方向
 
     def auto_move(self,hero):
         if not self.is_shot:
@@ -288,7 +289,9 @@ class Missile(Thing):
     def auto_shot_enemy_move(self,enemy):
         if self.is_shot:
             #增加导弹变速更能
-            if math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 150:
+            if math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 500:
+                self.speed = 100
+            elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 150:
                 self.speed = 20
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 100:
                 self.speed = 10
@@ -308,7 +311,13 @@ class Missile(Thing):
 
     def display(self):
         '''显示导弹位置'''
-        self.main.screen.blit(self.get_image(), (self.position_x, self.position_y))  # 显示子弹的位置
+        if self.position_y < self.main.enemy.position_y and not self.y_flag:
+            self.image = pygame.transform.flip(self.image,False,True)
+            self.y_flag = True
+        elif self.position_y > self.main.enemy.position_y and self.y_flag:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.y_flag = False
+        self.main.screen.blit(self.image, (self.position_x, self.position_y))  # 显示子弹的位置
 
 
 class Main(object):
