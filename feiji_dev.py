@@ -135,7 +135,7 @@ class Hero(Plane):
         '''飞机射击方法'''
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_SPACE]:
-            print('--space--')
+            #print('--space--')
             self.bullets.append(self.bullet_type(m,self))
         for bullet in self.bullets:
             bullet.auto_move()
@@ -152,7 +152,7 @@ class Hero(Plane):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[K_j]:
             self.weapon_list.rotate(1)
-            print(self.weapon_list)
+            #print(self.weapon_list)
             self.bullet_type = self.weapon_list[0]
 
     def shot_missile(self):
@@ -184,7 +184,7 @@ class Small_Enemy(Plane):
             self.position_x += random.randint(-1,1) * self.get_speed()*3
 
     def bullet_move(self,bullet_temp):
-        print(self.position_x,self.position_y)
+        #print(self.position_x,self.position_y)
         bullet_temp.position_y += (self.speed + 5)
 
     def auto_file(self):
@@ -203,7 +203,7 @@ class Small_Enemy(Plane):
                 self.bullet_move(bullet)
                 main.screen.blit(bullet.image,(int(bullet.position_x),int(bullet.position_y)))
             else:
-                print(self.bullets)
+                #print(self.bullets)
                 self.bullets.remove(bullet)
 
         main.screen.blit(self.image, (int(self.position_x), int(self.position_y))) # 显示飞机的位置
@@ -328,12 +328,22 @@ class Main(object):
         self.background = pygame.image.load('./resource/background.png') #  背景图片
         self.screen = pygame.display.set_mode((self.__weight, self.__height), 0, 32)
         self.enemy = None
+        self.screen_y = 0
+        self.screen_speed = 5
 
     def get_weight(self):  # 获得主窗口的宽度
         return self.__weight
 
     def get_height(self):  # 获得主窗口的高度
         return self.__height
+
+    def rorate_screen(self):
+        print(self.screen_y)
+        self.screen_y += self.screen_speed
+        self.screen.blit(self.background, (0, self.screen_y))
+        self.screen.blit(self.background,(0,self.screen_y - 600))
+        if self.screen_y >= 600:
+            self.screen_y = 0
 
     def main(self):
         '''游戏的主界面函数'''
@@ -348,7 +358,7 @@ class Main(object):
                 if event.type == pygame.QUIT:
                     sys.exit()
 
-            self.screen.blit(self.background, (0, 0))  # 添加背景信息
+            self.rorate_screen()# 添加背景信息
 
             #ms.display()  ## 测试功能
 
