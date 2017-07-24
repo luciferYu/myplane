@@ -174,7 +174,12 @@ class Small_Enemy(Plane):
 
     def move(self):
         self.position_y += self.get_speed()  # 小飞机向下移动
-        self.position_x += random.randint(-1,1) * self.get_speed()*3
+        if self.is_left():
+            self.position_x += self.get_speed()
+        elif self.is_right():
+            self.position_x -= self.get_speed()
+        else:
+            self.position_x += random.randint(-1,1) * self.get_speed()*5
     def display(self,main):
         #  将飞机图片粘贴到窗口中
         main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
