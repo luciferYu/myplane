@@ -280,11 +280,16 @@ class Missile(Thing):
         self.is_shot = False
         self.speed = 20
         self.y_flag = False  #用来识别自己的飞机是否超过了对方飞机 调整导弹方向
+        self.angle = 0 #用来计算导弹与目标的角度值
+        #self.new_image = self.image  #用来显示更换角度后的导弹
 
     def auto_move(self,hero):
         if not self.is_shot:
             self.position_x = hero.position_x + hero.size_x / 2 + 3  # 物体的位置 横坐标
             self.position_y = hero.position_y + 30  # 物体的位置 纵坐标
+
+    def get_angle(self):
+        return int(math.atan2((self.position_y - self.main.enemy.position_y), (self.main.enemy.position_x - self.position_x)) * 180 / math.pi)
 
     def auto_shot_enemy_move(self,enemy):
         if self.is_shot:
@@ -311,13 +316,20 @@ class Missile(Thing):
 
     def display(self):
         '''显示导弹位置'''
-        if self.position_y < self.main.enemy.position_y and not self.y_flag:
-            self.image = pygame.transform.flip(self.image,False,True)
-            self.y_flag = True
-        elif self.position_y > self.main.enemy.position_y and self.y_flag:
-            self.image = pygame.transform.flip(self.image, False, True)
-            self.y_flag = False
-        self.main.screen.blit(self.image, (self.position_x, self.position_y))  # 显示子弹的位置
+        # if self.position_y < self.main.enemy.position_y and not self.y_flag:
+        #     self.image = pygame.transform.flip(self.image,False,True)
+        #     self.y_flag = True
+        # elif self.position_y > self.main.enemy.position_y and self.y_flag:
+        #     self.image = pygame.transform.flip(self.image, False, True)
+        #     self.y_flag = False
+
+
+        #计算导弹角度
+        self.angle = self.get_angle()
+        #print(self.angle)
+        self.new_image = self.image  # 用来显示更换角度后的导弹
+        self.new_image = pygame.transform.rotate(self.new_image, (self.angle + 270))
+        self.main.screen.blit(self.new_image, (self.position_x, self.position_y))  # 显示子弹的位置
 
 
 class Main(object):
