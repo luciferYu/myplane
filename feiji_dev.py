@@ -171,6 +171,8 @@ class Small_Enemy(Plane):
         super().__init__(51, 39, './resource/enemy0.png', speed=3)  # 初始化敌人小飞机类
         self.position_x = random.randint(0,m.get_weight() - self.size_x)
         self.position_y = 0
+        self.bullets = []
+        self.main = main
 
     def move(self):
         self.position_y += self.get_speed()  # 小飞机向下移动
@@ -180,9 +182,30 @@ class Small_Enemy(Plane):
             self.position_x -= self.get_speed()
         else:
             self.position_x += random.randint(-1,1) * self.get_speed()*3
+
+    def bullet_move(self,bullet_temp):
+        bullet_temp.position_y += (self.speed + 5)
+
+    def auto_file(self):
+        rand_num = random.randint(1,50)
+        if rand_num in (3,7,13,27):
+            self.bullet = Bullet(m,self.main.enemy)
+            self.bullet.speed = (- self.bullet.speed)
+            self.bullet.position_x = self.position_x + 23
+            self.bullet.position_y = self.position_y + 20
+            self.bullets.append(self.bullet)
+
     def display(self,main):
         #  将飞机图片粘贴到窗口中
-        main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y)))  # 显示飞机的位置
+        for bullet in self.bullets:
+            if  not bullet.is_bottom():
+                self.bullet_move(bullet)
+                main.screen.blit(bullet.get_image(),(int(bullet.position_x),int(bullet.position_y)))
+            else:
+                print(self.bullets)
+                self.bullets.remove(bullet)
+
+        main.screen.blit(self.get_image(), (int(self.position_x), int(self.position_y))) # 显示飞机的位置
 
 
 class Bullet(Thing):
@@ -328,6 +351,7 @@ class Main(object):
 
             if self.enemy:
                 self.enemy.move()
+                self.enemy.auto_file()
                 self.enemy.display(m)
             else:
                 self.enemy = Small_Enemy(m)
