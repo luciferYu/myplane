@@ -325,11 +325,14 @@ class Missile(Thing):
 
 
         #计算导弹角度
-        self.angle = self.get_angle()
-        #print(self.angle)
-        self.new_image = self.image  # 用来显示更换角度后的导弹
-        self.new_image = pygame.transform.rotate(self.new_image, (self.angle + 270))
-        self.main.screen.blit(self.new_image, (self.position_x, self.position_y))  # 显示子弹的位置
+        if self.is_shot:
+            self.angle = self.get_angle()
+            #print(self.angle)
+            self.new_image = self.image  # 用来显示更换角度后的导弹
+            self.new_image = pygame.transform.rotate(self.new_image, (self.angle + 270))
+            self.main.screen.blit(self.new_image, (self.position_x, self.position_y))  # 显示子弹的位置
+        else:
+            self.main.screen.blit(self.image, (self.position_x, self.position_y))
 
 
 class Main(object):
