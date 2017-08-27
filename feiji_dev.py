@@ -299,11 +299,11 @@ class Missile(Thing):
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2)) > 150:
                 self.speed = 50
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 100:
-                self.speed = 30
+                self.speed = 25
             elif math.sqrt(((self.position_x - self.main.enemy.position_x) ** 2) + ((self.position_y - self.main.enemy.position_x) ** 2))  > 20:
                 self.speed = 5
             else:
-                self.speed = 1
+                self.speed = 3
             #导弹跟踪功能
             if self.position_x > enemy.position_x:
                 self.position_x -= self.speed
